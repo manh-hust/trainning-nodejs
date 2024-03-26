@@ -7,6 +7,10 @@
     "strict": true,
     "inlineSourceMap": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@test/*": ["./__tests__/*"]
+    }
   }
 }
