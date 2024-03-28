@@ -1,0 +1,15 @@
+Connect DB + mock connect DB trong test đi để học thêm về mock trong test, 
+Tạo TODO list bằng cách chạy tool truyền vào file config và file data
+
+Đầu vào
+File config: Chứa operation thực hiện: THÊM/SỬA/XÓA/ĐỌC/LIST, 
+    path file đầu vào (nếu là TH thêm/sửa), id của task (đọc/xóa), 
+    options để filter/sort TH list tasks, 
+    path đầu ra (nếu chỉ định thì export kq ra file), 
+    path run log/error log (optional để export log ra ngoài việc output log ra console)
+File input (Nội dung task cần thêm mới/update) -> Có thêm mới/update theo batch
+
+Đọc nội dung file config, file input (nếu có), xử lý thao tác DB để export ra kết quả (console hoặc ra file), 
+    trong lúc chạy có output cả run log/warning log/error log theo log level riêng. 
+    Viết test để đảm bảo coverage 100%
+    Yêu cầu bổ sung: Validate command line option truyền vào , validate file config, input
