@@ -5,18 +5,26 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
+    "start": "tsc && node ./dist/src/main.js",
     "prepublish": "npm run build",
-    "test": "jest"
-
+    "test": "jest",
+    "lint": "eslint . --ext .ts",
+    "lint-fix": "eslint . --ext .ts --fix"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.24.1",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.30",
     "@types/yargs": "^17.0.32",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "eslint": "^8.57.0",
+    "husky": "^4.3.8",
     "jest": "^29.7.0",
+    "prettier": "^3.2.5",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.3"
   },
@@ -24,7 +32,17 @@
     "@types/emojione": "^2.2.9",
     "emoji-search": "^1.0.0",
     "emojione": "^4.5.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "ts-node": "^10.9.2",
     "tslog": "^4.9.2",
     "yargs": "^17.7.2"
-  }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run test"
+    }
+  },
+  "packageManager": "yarn@4.1.1+sha256.f3cc0eda8e5560e529c7147565b30faa43b4e472d90e8634d7134a37c7f59781"
 }
