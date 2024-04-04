@@ -1,10 +1,14 @@
 import { FileConfig, Todo, User } from '@src/types';
-import { validateJsonFileConfig, validateJsonInputFile } from '@src/utils/validate-json';
+import { fileConfigSchema, fileInputSchema } from '@src/constants/json-schema';
 
+import { OPERATION } from '@src/constants/operation';
 import fs from 'fs';
-import { isValidFile } from '@src/utils/validate-file';
 import { logger } from '@src/commons/logger';
+import { overwriteConfigFile } from '@src/utils/overwrite-config-file';
+import { readFile } from '@src/utils/validate-file';
 import { readFileSync } from 'fs';
+import { validateJsonFile } from '@src/utils/validate-json';
+import yargs from 'yargs';
 
 /**
  * Read user data file
@@ -47,39 +51,61 @@ export function readUserDataFile(path: string): User[] | undefined {
 }
 
 /**
- * Read config file
- * @param {string} path - Config file name
- * @returns {Config | undefined} Config data
+ * Read file and parse to json data
+ * @param {string} path - Input file name
+ * @returns { T }
  */
-export function readConfigFile(path: string): FileConfig | undefined {
-  const fileData = isValidFile(path);
-  // Check file is valid
-  if (!fileData) {
-    logger.error('Invalid config file');
-    return;
-  }
-  const jsonFileData = JSON.parse(fileData);
-  // Check json schema
-  if (!validateJsonFileConfig(jsonFileData)) return;
+export function readJsonFile<T>(path: string): T {
+  // Validate file path
+  const inputFileData = readFile(path);
+  // Parse input file data to json type
+  const jsonFileData: T = JSON.parse(inputFileData);
 
   return jsonFileData;
 }
 
 /**
+ * @description Loads the configuration from the command line arguments and validates it against the JSON schema.
+ * @param {yargs.Arguments<{ configFile: string; inputFile?: string; }>} argv - The command line arguments.
+ * @returns {FileConfig} The loaded and validated configuration object.
+ */
+export function loadConfig(
+  argv: yargs.Arguments<{
+    configFile: string;
+    inputFile?: string;
+  }>,
+): FileConfig {
+  // Load configuration from JSON file
+  let config: FileConfig = readJsonFile<FileConfig>(argv.configFile);
+
+  // Overwrite loaded configuration with command line arguments
+  config = overwriteConfigFile(config, argv);
+
+  // Validate configuration against JSON schema
+  if (!validateJsonFile(fileConfigSchema, config)) throw Error('Invalid JSON schema in the configuration file');
+
+  // Check input file existence for ADD or UPDATE operations
+  if (!config.inputFile && (config.operation === OPERATION.add || config.operation === OPERATION.update))
+    throw Error('Missing input file for ADD/UPDATE operation');
+
+  // Check log file existence
+  if (!config.logFile) throw Error('Missing log file');
+
+  // Check output file existence
+  if (!config.outputFile) throw Error('Missing output file');
+
+  return config;
+}
+
+/**
  * Read input file
  * @param {string} path - Input file name
- * @returns {Config | undefined} New todo data
+ * @returns {Config } New todo data
  */
-export function readInputFile(path: string): Todo | undefined {
-  const inputFileData = isValidFile(path);
-  // Check file is valid
-  if (!inputFileData) {
-    logger.error('Invalid input file');
-    return;
-  }
-  const jsonFileData = JSON.parse(inputFileData);
+export function loadInputData(path: string): Todo[] {
+  const inputData: Todo[] = readJsonFile<Todo[]>(path);
   // Check json schema
-  if (!validateJsonInputFile(jsonFileData)) return;
+  if (!validateJsonFile(fileInputSchema, inputData)) throw Error('Invalid json schema input file');
 
-  return jsonFileData;
+  return inputData;
 }

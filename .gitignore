@@ -1,3 +1,7 @@
 /dist
 /node_modules
 /coverage
+
+.env
+logs.json
+output.txt

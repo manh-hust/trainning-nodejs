@@ -1,20 +1,18 @@
 import { Option, Todo } from '@src/types';
 
-import { logger } from '@src/commons/logger';
-import mysql from 'mysql2/promise';
+import TodoService from '@src/services/todo.service';
 
 /**
  * Controller class for handling todo operations.
  */
 export default class TodoController {
-  private conn;
-
+  private outputFile: string;
   /**
    * Constructs a new TodoController instance.
-   * @param {mysql.Connection} conn MySQL connection
+   * @param {string} outputFile - The path to the output file.
    */
-  public constructor(conn: mysql.Connection) {
-    this.conn = conn;
+  constructor(outputFile: string) {
+    this.outputFile = outputFile;
   }
 
   /**
@@ -23,22 +21,9 @@ export default class TodoController {
    * @returns {Promise<Todo[]>} List of todo items
    */
   public async list(option?: Option): Promise<Todo[]> {
-    // Default query
-    let query: string = 'SELECT * FROM todos';
-    switch (option?.type) {
-      // Sort by option
-      case 'sort':
-        query = query + ` ORDER BY ${option.field} ${option.value}`;
-        break;
-      // Filter by option
-      case 'filter':
-        query = query + ` WHERE ${option.field} = ${option.value}`;
-        break;
-      default:
-        break;
-    }
-    const [row] = await this.conn.execute(query);
-    return row as Todo[];
+    const items: Todo[] = await TodoService.getList(option);
+    TodoService.writeDataToFile('LIST', this.outputFile, items);
+    return items;
   }
 
   /**
@@ -47,8 +32,9 @@ export default class TodoController {
    * @returns {Promise<Todo>} Todo item
    */
   public async read(id: number): Promise<Todo> {
-    const [row] = await this.conn.execute(`SELECT * FROM todos WHERE id = ${id}`);
-    return row as Todo;
+    const item: Todo = await TodoService.getOne(id);
+    TodoService.writeDataToFile('READ', this.outputFile, item);
+    return item;
   }
 
   /**
@@ -56,16 +42,11 @@ export default class TodoController {
    * @param {Todo} todo New todo item data
    * @returns {Promise<Todo>} Newly added todo item
    */
-  public async add(todo: Todo): Promise<Todo> {
-    // Format current date as MySQL DATETIME
-    const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    // Add new content
-    const [row] = await this.conn.execute(`INSERT INTO todos (title, created_at, updated_at) VALUES (?, ?, ?)`, [
-      todo?.title,
-      currentDate,
-      currentDate,
-    ]);
-    return row as Todo;
+  public async add(todos: Todo[]): Promise<Todo[]> {
+    const newItems: Todo[] = await TodoService.addTodo(todos);
+    TodoService.writeDataToFile('ADD', this.outputFile, newItems);
+
+    return newItems;
   }
 
   /**
@@ -75,36 +56,10 @@ export default class TodoController {
    * @returns {Promise<Todo>} Updated todo item
    */
   public async update(id: number, todo: Todo): Promise<Todo> {
-    // Check if the todo with the provided ID exists
-    if (!(await this.todoExists(id))) {
-      logger.error('Todo ID does not exist.');
-      throw new Error('Todo ID does not exist');
-    }
+    const newItem: Todo = await TodoService.updateTodo(id, todo);
+    TodoService.writeDataToFile('UPDATE', this.outputFile, newItem);
 
-    // Construct the SQL command to update the database
-    let query = `UPDATE todos SET`;
-    const values: unknown[] = [];
-    if (todo.title !== undefined) {
-      query += ' title = ?,';
-      values.push(todo.title);
-    }
-    if (todo.status !== undefined) {
-      query += ' status = ?,';
-      values.push(todo.status);
-    }
-    // Format current date as MySQL DATETIME
-    const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    // Add updated_at field
-    query += ' updated_at = ?,';
-    values.push(currentDate);
-
-    // Remove trailing comma and add WHERE clause
-    query = query.slice(0, -1) + ' WHERE id = ?;';
-    values.push(id);
-
-    // Execute the SQL command
-    const [row] = await this.conn.execute(query, values);
-    return row as Todo;
+    return newItem;
   }
 
   /**
@@ -113,24 +68,8 @@ export default class TodoController {
    * @returns {Promise<string>} Notification message
    */
   public async delete(id: number): Promise<string> {
-    // Check if the todo with the provided ID exists
-    if (!(await this.todoExists(id))) {
-      logger.error('Record not found!');
-      throw new Error('Record not found!');
-    }
-
-    await this.conn.execute(`DELETE FROM todos WHERE id = ${id}`);
-    return 'Delete success!';
-  }
-
-  /**
-   * Checks if a todo with the provided ID exists.
-   * @param {number} id Todo ID
-   * @returns {Promise<boolean>} Returns true if the todo exists, otherwise false.
-   */
-  private async todoExists(id: number): Promise<boolean> {
-    // Find todo id
-    const [result] = await this.conn.execute('SELECT id FROM todos WHERE id = ?;', [id]);
-    return Object.values(result).length !== 0;
+    const isSuccess: boolean = await TodoService.deleteTodo(id);
+    TodoService.writeDataToFile('DELETE', this.outputFile, 'Delete success !');
+    return isSuccess ? 'Delete success !' : 'Error';
   }
 }

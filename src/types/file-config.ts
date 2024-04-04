@@ -12,7 +12,7 @@ export interface Option {
 
 /**
  * Define config file
- * @prop {operation}
+ * @prop {operation} specify action is (add/list/read/update/delete)
  * @prop {id} todo task id (read/delete)
  * @prop {inputFile} input file (task content that needs to be add/update)
  * @prop {option} option to filter/sort if list tasks
