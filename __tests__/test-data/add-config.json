@@ -1,5 +1,5 @@
 {
-  "operation": "LIST",
+  "operation": "ADD",
   "id": 7,
   "option": {
     "type": "filter",

@@ -6,7 +6,6 @@
     "value": "1",
     "field": "status"
   },
-  "inputFile": "input.json",
   "outputFile": "output.txt",
   "logFile": "logs.json"
 }

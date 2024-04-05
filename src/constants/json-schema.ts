@@ -1,12 +1,16 @@
 import { FileConfig, Todo } from '@src/types';
 
 import { JSONSchemaType } from 'ajv';
+import { OPERATION } from './operation';
 
 // Define JSON schema for the configuration
 export const fileConfigSchema: JSONSchemaType<FileConfig> = {
   type: 'object',
   properties: {
-    operation: { type: 'string' },
+    operation: {
+      type: 'string',
+      enum: [OPERATION.add, OPERATION.read, OPERATION.list, OPERATION.delete, OPERATION.update],
+    },
     id: { type: 'number', nullable: true },
     inputFile: { type: 'string', nullable: true },
     option: {

@@ -1,12 +1,11 @@
 {
-  "operation": "ADD",
-  "id": 12,
+  "operation": "UPDATE",
+  "id": 5,
   "option": {
     "type": "filter",
     "value": "0",
     "field": "status"
   },
-  "inputFile": "input.json",
   "outputFile": "output.txt",
   "logFile": "log.txt"
 }

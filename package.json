@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "prepublish": "npm run build",
-    "test": "jest",
+    "test": "jest --runInBand --force-exit",
     "lint": "eslint . --ext .ts",
     "lint-fix": "eslint . --ext .ts --fix"
   },

@@ -6,15 +6,6 @@ import TodoService from '@src/services/todo.service';
  * Controller class for handling todo operations.
  */
 export default class TodoController {
-  private outputFile: string;
-  /**
-   * Constructs a new TodoController instance.
-   * @param {string} outputFile - The path to the output file.
-   */
-  constructor(outputFile: string) {
-    this.outputFile = outputFile;
-  }
-
   /**
    * Retrieves all todo items.
    * @param {Option} option Sorting or filtering options (optional)
@@ -22,7 +13,6 @@ export default class TodoController {
    */
   public async list(option?: Option): Promise<Todo[]> {
     const items: Todo[] = await TodoService.getList(option);
-    TodoService.writeDataToFile('LIST', this.outputFile, items);
     return items;
   }
 
@@ -33,7 +23,6 @@ export default class TodoController {
    */
   public async read(id: number): Promise<Todo> {
     const item: Todo = await TodoService.getOne(id);
-    TodoService.writeDataToFile('READ', this.outputFile, item);
     return item;
   }
 
@@ -44,8 +33,6 @@ export default class TodoController {
    */
   public async add(todos: Todo[]): Promise<Todo[]> {
     const newItems: Todo[] = await TodoService.addTodo(todos);
-    TodoService.writeDataToFile('ADD', this.outputFile, newItems);
-
     return newItems;
   }
 
@@ -57,8 +44,6 @@ export default class TodoController {
    */
   public async update(id: number, todo: Todo): Promise<Todo> {
     const newItem: Todo = await TodoService.updateTodo(id, todo);
-    TodoService.writeDataToFile('UPDATE', this.outputFile, newItem);
-
     return newItem;
   }
 
@@ -67,9 +52,8 @@ export default class TodoController {
    * @param {number} id Todo ID
    * @returns {Promise<string>} Notification message
    */
-  public async delete(id: number): Promise<string> {
+  public async delete(id: number): Promise<boolean> {
     const isSuccess: boolean = await TodoService.deleteTodo(id);
-    TodoService.writeDataToFile('DELETE', this.outputFile, 'Delete success !');
-    return isSuccess ? 'Delete success !' : 'Error';
+    return isSuccess;
   }
 }

@@ -88,12 +88,6 @@ export function loadConfig(
   if (!config.inputFile && (config.operation === OPERATION.add || config.operation === OPERATION.update))
     throw Error('Missing input file for ADD/UPDATE operation');
 
-  // Check log file existence
-  if (!config.logFile) throw Error('Missing log file');
-
-  // Check output file existence
-  if (!config.outputFile) throw Error('Missing output file');
-
   return config;
 }
 
