@@ -1,6 +1,6 @@
 {
-  "operation": "LIST",
-  "id": 7,
+  "operation": "UPDATE",
+  "id": 146,
   "option": {
     "type": "filter",
     "value": "1",

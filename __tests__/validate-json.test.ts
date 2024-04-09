@@ -6,6 +6,7 @@ import { validateJsonFile } from '@src/utils/validate-json';
 // Test cases for normal cases
 describe('Normal cases', () => {
   test('[1]. Should return true if json data is valid schema', () => {
+    // Define config data
     const config: FileConfig = {
       operation: 'ADD',
       id: 12,
@@ -25,6 +26,7 @@ describe('Normal cases', () => {
 // Test cases for error cases
 describe('Error cases', () => {
   test('[1]. Should return false if json data is invalid schema', () => {
+    // Define config data miss operation
     const config: unknown = {
       id: 12,
       option: {

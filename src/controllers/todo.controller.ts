@@ -31,8 +31,8 @@ export default class TodoController {
    * @param {Todo} todo New todo item data
    * @returns {Promise<Todo>} Newly added todo item
    */
-  public async add(todos: Todo[]): Promise<Todo[]> {
-    const newItems: Todo[] = await TodoService.addTodo(todos);
+  public async add(todos: Todo[]): Promise<number> {
+    const newItems: number = await TodoService.addTodo(todos);
     return newItems;
   }
 
@@ -42,8 +42,8 @@ export default class TodoController {
    * @param {Todo} todo Todo data to update
    * @returns {Promise<Todo>} Updated todo item
    */
-  public async update(id: number, todo: Todo): Promise<Todo> {
-    const newItem: Todo = await TodoService.updateTodo(id, todo);
+  public async update(id: number, todo: Todo): Promise<number> {
+    const newItem: number = await TodoService.updateTodo(id, todo);
     return newItem;
   }
 

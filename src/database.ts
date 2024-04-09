@@ -1,7 +1,5 @@
 import mysql, { Connection } from 'mysql2/promise';
 
-import { logger } from './commons/logger';
-
 // Global variable to store the database connection
 let connection: Connection;
 
@@ -20,7 +18,6 @@ export async function initializeConnection(): Promise<Connection> {
       database: process.env.DB_NAME,
     });
   }
-  logger.info('Init database');
   return connection;
 }
 

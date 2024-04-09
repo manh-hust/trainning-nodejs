@@ -44,7 +44,7 @@ export async function main(): Promise<number> {
         if (config.outputFile) {
           writeFile(config.outputFile, 'READ', await todoController.read(Number(config.id)));
         } else {
-          // logger.info(await todoController.read(Number(config.id)));
+          logger.info(await todoController.read(Number(config.id)));
         }
         break;
       case OPERATION.delete:
@@ -68,7 +68,7 @@ export async function main(): Promise<number> {
     return 1;
   } finally {
     // End db connection
-    closeConnection();
+    await closeConnection();
   }
 
   return 0;

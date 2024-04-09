@@ -19,6 +19,6 @@ describe('Error cases', () => {
   ];
   // Iterate over each test case expect undefined
   test.each(testData)('[%i]. Should return false if file config is incorrect format', (index, filePath) => {
-    expect(readFile(filePath)).toBeUndefined();
+    expect(() => readFile(filePath)).toThrow(Error);
   });
 });

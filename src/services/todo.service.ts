@@ -1,7 +1,9 @@
 import { Option, Todo } from '@src/types';
+import { addFilterLikeQuery, addFilterQuery, addSortQuery } from '@src/helper/database.helper';
 
-import { DatabaseHelper } from '@src/helper/database.helper';
+import { ResultSetHeader } from 'mysql2';
 import { connection } from '@src/database';
+import { logger } from '@src/commons/logger';
 
 /**
  * Handle todo controller logic.
@@ -19,13 +21,13 @@ export default class TodoService {
     // Build query based on options
     switch (option?.type) {
       case 'sort':
-        query = DatabaseHelper.addSortQuery(query, option.field, option.value);
+        query = addSortQuery(query, option.field, option.value);
         break;
       case 'filter':
-        if (option.field === 'name') {
-          query = DatabaseHelper.addFilterLikeQuery(query, 'name', option.value);
+        if (option.field === 'title') {
+          query = addFilterLikeQuery(query, 'title', option.value);
         } else {
-          query = DatabaseHelper.addFilterQuery(query, option.field, option.value);
+          query = addFilterQuery(query, option.field, option.value);
         }
         break;
       default:
@@ -53,7 +55,7 @@ export default class TodoService {
    * @param todos An array of Todo objects to add.
    * @returns A Promise that resolves to an array of added Todo objects.
    */
-  static async addTodo(todos: Todo[]): Promise<Todo[]> {
+  static async addTodo(todos: Todo[]): Promise<number> {
     // Extract titles from todos array
     const titles = todos.map((todo) => todo.title);
 
@@ -62,8 +64,7 @@ export default class TodoService {
 
     // Execute the single insert query with multiple values
     const [rows] = await connection.execute(`INSERT INTO todos (title) VALUES ${placeholders}`, titles);
-
-    return rows as Todo[];
+    return (rows as ResultSetHeader).insertId;
   }
 
   /**
@@ -72,12 +73,11 @@ export default class TodoService {
    * @param todo An object representing the updated todo.
    * @returns A Promise that resolves to the updated Todo object.
    */
-  static async updateTodo(id: number, todo: Todo): Promise<Todo> {
+  static async updateTodo(id: number, todo: Todo): Promise<number> {
     // Check if the todo with the provided ID exists
     if (!(await this.isExists(id))) {
       throw new Error('Todo ID does not exist');
     }
-
     // Construct the SQL command to update the database
     let query = `UPDATE todos SET`;
     const values: unknown[] = [];
@@ -94,8 +94,11 @@ export default class TodoService {
     values.push(id);
 
     // Execute the SQL command
-    const [row] = await connection.execute(query, values);
-    return row as Todo;
+    const [rows] = await connection.execute(query, values);
+    logger.debug(rows);
+    if ((rows as ResultSetHeader).affectedRows !== 1) throw new Error('Update todo failed');
+
+    return id;
   }
 
   /**
@@ -105,9 +108,7 @@ export default class TodoService {
    */
   static async deleteTodo(id: number): Promise<boolean> {
     // Check if the todo with the provided ID exists
-    if (!(await this.isExists(id))) {
-      throw new Error('Record not found!');
-    }
+    if (!(await this.isExists(id))) throw new Error('Record not found!');
 
     // Execute SQL command to delete the todo
     await connection.execute(`DELETE FROM todos WHERE id = ?`, [id]);
@@ -120,10 +121,9 @@ export default class TodoService {
    * @param id The ID of the todo to check for existence.
    * @returns A Promise that resolves to a boolean indicating whether the todo exists.
    */
-  private static async isExists(id: number): Promise<boolean> {
+  static async isExists(id: number): Promise<boolean> {
     // Execute SQL command to check if the todo with the provided ID exists
     const [result] = await connection.execute('SELECT id FROM todos WHERE id = ?;', [id]);
-
     // Return true if the result contains any rows, indicating existence of the todo
     return Object.values(result).length !== 0;
   }
