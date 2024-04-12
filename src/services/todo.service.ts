@@ -3,7 +3,6 @@ import { addFilterLikeQuery, addFilterQuery, addSortQuery } from '@src/helper/da
 
 import { ResultSetHeader } from 'mysql2';
 import { connection } from '@src/database';
-import { logger } from '@src/commons/logger';
 
 /**
  * Handle todo controller logic.
@@ -95,7 +94,6 @@ export default class TodoService {
 
     // Execute the SQL command
     const [rows] = await connection.execute(query, values);
-    logger.debug(rows);
     if ((rows as ResultSetHeader).affectedRows !== 1) throw new Error('Update todo failed');
 
     return id;

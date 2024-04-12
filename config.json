@@ -1,5 +1,5 @@
 {
-  "operation": "UPDATE",
+  "operation": "LIST",
   "id": 146,
   "option": {
     "type": "filter",
@@ -7,6 +7,6 @@
     "field": "status"
   },
   "inputFile": "input.json",
-  "outputFile": "output.txt",
+  "outputFile": "output.json",
   "logFile": "logs.json"
 }

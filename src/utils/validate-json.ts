@@ -1,7 +1,5 @@
 import Ajv, { JSONSchemaType } from 'ajv';
 
-import { logger } from '@src/commons/logger';
-
 /**
  * Validates a JSON object against a JSON schema using Ajv library.
  * @param schema The JSON schema to validate against.
@@ -14,7 +12,6 @@ export function validateJsonFile<T>(schema: JSONSchemaType<T>, jsonObject: T): b
   const validate = ajv.compile(schema);
   // Validate the JSON object against the schema
   if (!validate(jsonObject)) {
-    logger.error(validate.errors);
     return false;
   }
 

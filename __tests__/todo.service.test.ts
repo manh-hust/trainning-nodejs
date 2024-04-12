@@ -14,9 +14,8 @@ jest.mock('@src/database', () => ({
 
 // Test case for Todo service
 describe('TodoService', () => {
-  // Test case for get list todo
-  describe('getList', () => {
-    test('[1]. Should return a list of todo with options if filter status option are provided', async () => {
+  describe('Normal cases', () => {
+    test('[getList-1]. Should return a list of todo with options if filter status option are provided', async () => {
       // Mock database query result for test case 1
       (connection.execute as jest.Mock).mockResolvedValueOnce([
         [
@@ -48,7 +47,8 @@ describe('TodoService', () => {
       const result = await TodoService.getList(option);
       expect(result).toEqual(expectData);
     });
-    test('[2]. Should return a list of todo with options if like query option are provided', async () => {
+
+    test('[getList-2]. Should return a list of todo with options if like query option are provided', async () => {
       // Mock database query result for test case 1
       (connection.execute as jest.Mock).mockResolvedValueOnce([
         [
@@ -80,7 +80,8 @@ describe('TodoService', () => {
       const result = await TodoService.getList(option);
       expect(result).toEqual(expectData);
     });
-    test('[3]. Should return a list of todo with options if sort option are provided', async () => {
+
+    test('[getList-3]. Should return a list of todo with options if sort option are provided', async () => {
       // Mock database query result for test case 2
       (connection.execute as jest.Mock).mockResolvedValueOnce([
         [
@@ -127,7 +128,8 @@ describe('TodoService', () => {
       const result = await TodoService.getList(option);
       expect(result).toEqual(expectData);
     });
-    test('[4]. Should return a list of todo without options if option are not provided', async () => {
+
+    test('[getList-4]. Should return a list of todo without options if option are not provided', async () => {
       // Mock database query result for test case 2
       (connection.execute as jest.Mock).mockResolvedValueOnce([
         [
@@ -168,10 +170,8 @@ describe('TodoService', () => {
       const result = await TodoService.getList();
       expect(result).toEqual(expectData);
     });
-  });
-  // Test case for get one todo
-  describe('getOne', () => {
-    test('[1]. Should return a todo if provide todo id', async () => {
+
+    test('[getOne-1]. Should return a todo if provide todo id', async () => {
       // Mock database query result for test case get one todo
       (connection.execute as jest.Mock).mockResolvedValueOnce([
         {
@@ -193,10 +193,8 @@ describe('TodoService', () => {
       const result = await TodoService.getOne(10);
       expect(result).toEqual(expectData);
     });
-  });
-  // Test case for add new todo
-  describe('addTodo', () => {
-    test('[1]. Should return new todo id if provide list todo title', async () => {
+
+    test('[addTodo-1]. Should return new todo id if provide list todo title', async () => {
       // Mock database query result for test case add new todo
       (connection.execute as jest.Mock).mockResolvedValueOnce([
         {
@@ -222,121 +220,103 @@ describe('TodoService', () => {
       const result = await TodoService.addTodo(todo);
       expect(result).toEqual(100);
     });
-  });
-  // Test case for update todo
-  describe('updateTodo', () => {
-    // Normal case
-    describe('Normal case', () => {
-      test('[1]. Should return updated todo id if provide new todo info', async () => {
-        // Mock database query result for test case update todo
-        (connection.execute as jest.Mock).mockResolvedValue([
-          {
-            fieldCount: 0,
-            affectedRows: 1,
-            insertId: 0,
-            info: 'Rows matched: 1  Changed: 0  Warnings: 0',
-            serverStatus: 2,
-            warningStatus: 0,
-            changedRows: 0,
-          },
-        ]);
-        // New todo info
-        const todo: Todo = {
-          title: 'Homework',
-          status: 2,
-        };
 
-        const result = await TodoService.updateTodo(100, todo);
-        expect(result).toEqual(100);
-      });
+    test('[updateTodo-1]. Should return updated todo id if provide new todo info', async () => {
+      // Mock database query result for test case update todo
+      (connection.execute as jest.Mock).mockResolvedValue([
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 0,
+          info: 'Rows matched: 1  Changed: 0  Warnings: 0',
+          serverStatus: 2,
+          warningStatus: 0,
+          changedRows: 0,
+        },
+      ]);
+      // New todo info
+      const todo: Todo = {
+        title: 'Homework',
+        status: 2,
+      };
+
+      const result = await TodoService.updateTodo(100, todo);
+      expect(result).toEqual(100);
     });
-    // Error case
-    describe('Error case', () => {
-      test('[1]. Should throw error if todo not exist', async () => {
-        // Mock database query result for test case update todo
-        (connection.execute as jest.Mock).mockResolvedValue([[]]);
-        // New todo info
-        const todo: Todo = {
-          title: 'Homework',
-          status: 2,
-        };
-        await expect(TodoService.updateTodo(100, todo)).rejects.toThrow(Error);
-      });
-      test('[2]. Should throw error if update error occurred', async () => {
-        // Mock database query result for test case update todo
-        (connection.execute as jest.Mock).mockResolvedValue([
-          {
-            fieldCount: 0,
-            affectedRows: 0,
-            insertId: 0,
-            info: 'Rows matched: 1  Changed: 0  Warnings: 0',
-            serverStatus: 2,
-            warningStatus: 0,
-            changedRows: 0,
-          },
-        ]);
-        // New todo info
-        const todo: Todo = {
-          title: 'Homework',
-          status: 2,
-        };
-        await expect(TodoService.updateTodo(100, todo)).rejects.toThrow(Error);
-      });
+
+    test('[deleteTodo-1]. Should return true if delete success', async () => {
+      // Mock database query result for test case delete todo
+      (connection.execute as jest.Mock).mockResolvedValueOnce([
+        {
+          fieldCount: 0,
+          affectedRows: 1,
+          insertId: 0,
+          info: 'Rows matched: 1  Changed: 0  Warnings: 0',
+          serverStatus: 2,
+          warningStatus: 0,
+          changedRows: 0,
+        },
+      ]);
+      const result = await TodoService.deleteTodo(100);
+      expect(result).toEqual(true);
     });
-  });
-  // Test case for delete todo
-  describe('deleteTodo', () => {
-    // Normal case
-    describe('Normal case', () => {
-      test('[1]. Should return true if delete success', async () => {
-        // Mock database query result for test case delete todo
-        (connection.execute as jest.Mock).mockResolvedValueOnce([
-          {
-            fieldCount: 0,
-            affectedRows: 1,
-            insertId: 0,
-            info: 'Rows matched: 1  Changed: 0  Warnings: 0',
-            serverStatus: 2,
-            warningStatus: 0,
-            changedRows: 0,
-          },
-        ]);
-        const result = await TodoService.deleteTodo(100);
-        expect(result).toEqual(true);
-      });
-    });
-    // Error case
-    describe('Error case', () => {
-      test('[1]. Should throw error if todo not exist', async () => {
-        // Mock database query result for test case delete todo
-        (connection.execute as jest.Mock).mockResolvedValueOnce([[]]);
-        await expect(TodoService.deleteTodo(100)).rejects.toThrow(Error);
-      });
+
+    test('[isExists-1]. Should return true if todo exist', async () => {
+      // Mock database query result for test case check todo exist
+      (connection.execute as jest.Mock).mockResolvedValueOnce([
+        {
+          id: 100,
+        },
+      ]);
+      const result = await TodoService.isExists(100);
+      expect(result).toBeTruthy();
     });
   });
-  // Test case for check todo exist
-  describe('isExists', () => {
-    // Normal case
-    describe('Normal case', () => {
-      test('[1]. Should return true if todo exist', async () => {
-        // Mock database query result for test case check todo exist
-        (connection.execute as jest.Mock).mockResolvedValueOnce([
-          {
-            id: 100,
-          },
-        ]);
-        const result = await TodoService.isExists(100);
-        expect(result).toBeTruthy();
-      });
+
+  describe('Error cases', () => {
+    test('[updateTodo-1]. Should throw error if todo not exist', async () => {
+      // Mock database query result for test case update todo
+      (connection.execute as jest.Mock).mockResolvedValue([[]]);
+      // New todo info
+      const todo: Todo = {
+        title: 'Homework',
+        status: 2,
+      };
+      await expect(TodoService.updateTodo(100, todo)).rejects.toThrow('Todo ID does not exist');
     });
-    // Error case
-    describe('Error case', () => {
-      test('[1]. Should return false if todo not exist', async () => {
-        // Mock database query result for test case check todo exist
-        (connection.execute as jest.Mock).mockResolvedValueOnce([[]]);
-        const result = await TodoService.isExists(100);
-        expect(result).toBeFalsy();
-      });
+
+    test('[updateTodo-2]. Should throw error if update error occurred', async () => {
+      // Mock database query result for test case update todo
+      (connection.execute as jest.Mock).mockResolvedValue([
+        {
+          fieldCount: 0,
+          affectedRows: 0,
+          insertId: 0,
+          info: 'Rows matched: 1  Changed: 0  Warnings: 0',
+          serverStatus: 2,
+          warningStatus: 0,
+          changedRows: 0,
+        },
+      ]);
+      // New todo info
+      const todo: Todo = {
+        title: 'Homework',
+        status: 2,
+      };
+      await expect(TodoService.updateTodo(100, todo)).rejects.toThrow('Update todo failed');
+    });
+
+    test('[deleteTodo-1]. Should throw error if todo not exist', async () => {
+      // Mock database query result for test case delete todo
+      (connection.execute as jest.Mock).mockResolvedValueOnce([[]]);
+      await expect(TodoService.deleteTodo(100)).rejects.toThrow('Record not found!');
+    });
+
+    test('[isExists-1]. Should return false if todo not exist', async () => {
+      // Mock database query result for test case check todo exist
+      (connection.execute as jest.Mock).mockResolvedValueOnce([[]]);
+      const result = await TodoService.isExists(100);
+      expect(result).toBeFalsy();
     });
   });
 });
