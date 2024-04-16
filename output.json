@@ -1,0 +1,5 @@
+2024-04-12 06:57:41  LIST [{"id":10,"title":"Task 138","status":1,"created_at":"2024-04-03T21:24:43.000Z","updated_at":"2024-04-03T21:24:43.000Z"},{"id":146,"title":"Football","status":1,"created_at":"2024-04-09T01:54:14.000Z","updated_at":"2024-04-09T01:54:14.000Z"}]
+2024-04-12 09:15:51  CONFIG "{\"operation\":\"ADD\",\"id\":12,\"inputFile\":\"input.json\",\"outputFile\":\"output.txt\",\"logFile\":\"log.txt\"}"
+2024-04-12 09:20:03  CONFIG "{\"operation\":\"ADD\",\"id\":12,\"inputFile\":\"input.json\",\"outputFile\":\"output.txt\",\"logFile\":\"log.txt\"}"
+2024-04-12 09:21:12  CONFIG "{\"operation\":\"ADD\",\"id\":12,\"inputFile\":\"input.json\",\"outputFile\":\"output.txt\",\"logFile\":\"log.txt\"}"
+2024-04-12 10:01:55  CONFIG "{\"operation\":\"ADD\",\"id\":12,\"inputFile\":\"input.json\",\"outputFile\":\"output.txt\",\"logFile\":\"log.txt\"}"

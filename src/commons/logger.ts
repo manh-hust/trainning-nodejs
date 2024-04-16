@@ -1,5 +1,6 @@
-import { Logger, ILogObj } from "tslog";
+import { ILogObj, Logger } from 'tslog';
 
-const logger: Logger<ILogObj> = new Logger();
-
-export { logger };
+/**
+ * Logger instance for logging messages.
+ */
+export const logger: Logger<ILogObj> = new Logger();

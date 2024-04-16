@@ -1,0 +1,12 @@
+{
+  "operation": "LIST",
+  "id": 146,
+  "option": {
+    "type": "filter",
+    "value": "1",
+    "field": "status"
+  },
+  "inputFile": "input.json",
+  "outputFile": "output.json",
+  "logFile": "logs.json"
+}
